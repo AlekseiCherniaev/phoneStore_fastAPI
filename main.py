@@ -3,6 +3,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 
 from core.models import db_helper, Base
+from products.views import router as products_router
 
 
 @asynccontextmanager
@@ -14,6 +15,7 @@ async def lifespan(app_: FastAPI):
 
 
 app = FastAPI(lifespan=lifespan)
+app.include_router(products_router)
 
 
 @app.get("/")

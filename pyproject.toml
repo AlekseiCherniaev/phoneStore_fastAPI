@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "phonestore-fastapi"
+version = "0.1.0"
+description = ""
+authors = ["Aleksey Cherniaev <cherniaevaleksey2304@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+fastapi = {extras = ["all"], version = "^0.110.3"}
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.2.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

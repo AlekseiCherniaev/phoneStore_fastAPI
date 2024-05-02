@@ -7,6 +7,7 @@ class ProductBase(BaseModel):
     price: int
     description: str
     counts: int
+    category_id: int
 
 
 class ProductCreate(ProductBase):
@@ -22,6 +23,7 @@ class ProductUpdatePartial(ProductBase):
     price: int | None = None
     description: str | None = None
     counts: int | None = None
+    category_id: int | None = None
 
 
 class Product(ProductBase):

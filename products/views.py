@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException, status, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from core.models import db_helper
 from . import crud
-from .schemas import Product, ProductCreate, ProductUpdate
+from .schemas import Product, ProductCreate, ProductUpdate, ProductUpdatePartial
 from products.dependencies import product_by_id
 
 router = APIRouter(
@@ -52,7 +52,7 @@ async def update_product(
 
 @router.patch("/{product_id}/")
 async def patch_product(
-    phone_update: ProductUpdate,
+    phone_update: ProductUpdatePartial,
     phone: Product = Depends(product_by_id),
     session: AsyncSession = Depends(db_helper.scoped_session_dependency),
 ) -> Product:

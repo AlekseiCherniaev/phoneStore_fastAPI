@@ -6,7 +6,7 @@ __all__ = (
     "User",
     "Category",
     "Tag",
-    "Phone_tag_association",
+    "PhoneTagAssociation",
 )
 
 from .base import Base
@@ -15,4 +15,4 @@ from .db_helper import db_helper, DBHelper
 from .user import User
 from .category import Category
 from .tag import Tag
-from .phone_tag_association import Phone_tag_association
+from .phone_tag_association import PhoneTagAssociation

@@ -1,12 +1,15 @@
-from sqlalchemy import Table, Column, Integer, ForeignKey, UniqueConstraint
+from sqlalchemy import ForeignKey, UniqueConstraint
+from sqlalchemy.orm import mapped_column, Mapped
 
 from core.models import Base
 
-Phone_tag_association = Table(
-    "phone_tag_association",
-    Base.metadata,
-    Column("id", Integer, primary_key=True),
-    Column("phone_id", ForeignKey("phones.id")),
-    Column("tag_id", ForeignKey("tags.id")),
-    UniqueConstraint("phone_id", "tag_id"),
-)
+
+class PhoneTagAssociation(Base):
+    __tablename__ = "phone_tag_association"
+    __table_args__ = (UniqueConstraint(
+        "phone_id", "tag_id", name="idx_unique_tag_phone"
+    ),)
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    phone_id: Mapped[int] = mapped_column(ForeignKey("phones.id"))
+    tag_id: Mapped[int] = mapped_column(ForeignKey("tags.id"))

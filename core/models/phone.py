@@ -6,6 +6,7 @@ from .base import Base
 
 if TYPE_CHECKING:
     from .category import Category
+    from .tag import Tag
 
 
 class Product(Base):
@@ -18,3 +19,6 @@ class Product(Base):
     category_id: Mapped[int] = mapped_column(ForeignKey("categories.id"))
 
     category: Mapped["Category"] = relationship(back_populates="phones")
+    tags: Mapped[list["Tag"]] = relationship(
+        back_populates="phones", secondary="phone_tag_association"
+    )

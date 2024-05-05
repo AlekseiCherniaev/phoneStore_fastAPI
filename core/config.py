@@ -1,4 +1,8 @@
+from pathlib import Path
+
 from pydantic_settings import BaseSettings
+
+BASE_DIR = Path(__file__).parent.parent
 
 
 class Settings(BaseSettings):
@@ -11,7 +15,11 @@ class Settings(BaseSettings):
     DB_PASSWORD: str
 
     SECRET_KEY: str
-    ALGORITHM: str
+    ALGORITHM: str = "RS256"
+
+    public_key_path: Path = BASE_DIR / "certs" / "jwt-private.pem"
+    private_key_path: Path = BASE_DIR / "certs" / "jwt-public.pem"
+    token_expire_minutes: int = 3
 
     def get_db_url(self):
         return f"postgresql+asyncpg://{self.DB_USER}:{self.DB_PASSWORD}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"

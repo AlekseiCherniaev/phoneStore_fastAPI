@@ -3,27 +3,32 @@ from annotated_types import MinLen, MaxLen
 from pydantic import BaseModel, EmailStr, ConfigDict
 
 
-class CreateUser(BaseModel):
+class SCreateUser(BaseModel):
     username: str
     password: str
     email: EmailStr | None = None
 
 
-class UserSchema(BaseModel):
+class User(BaseModel):
     model_config = ConfigDict(strict=True)
     username: str
     email: EmailStr | None = None
     active: bool | None = True
 
 
-class UserInBD(UserSchema):
-    hashed_password: str
+class SUserInBD(User):
+    password: str
 
 
-class Token(BaseModel):
+class SUserLogin(BaseModel):
+    username: str
+    password: str
+
+
+class SToken(BaseModel):
     access_token: str
     token_type: str
 
 
-class TokenData(BaseModel):
+class STokenData(BaseModel):
     username: str | None = None

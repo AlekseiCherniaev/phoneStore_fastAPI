@@ -10,7 +10,7 @@ def encode_jwt(
     private_key: str = settings.private_key_path.read_text(),
     algorithm: str = settings.ALGORITHM,
     expire_minutes: int = settings.token_expire_minutes,
-        expire_time_delta: timedelta | None = None,
+    expire_time_delta: timedelta | None = None,
 ):
     to_encode = payload.copy()
     now = datetime.utcnow()
@@ -52,5 +52,4 @@ def validate_password(
     password: str,
     hashed_password: bytes,
 ) -> bool:
-    return bcrypt.checkpw(password.encode(),
-                          )
+    return bcrypt.checkpw(password.encode(), hashed_password=hashed_password)

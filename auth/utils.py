@@ -57,8 +57,9 @@ def validate_password(
 
 
 def password_check_complexity(password: str) -> bool:
+    # reg = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!#%*?&]{6,20}$"
     password_regex = (
-        r"^([a-zA-Z0-9$@$!%*#?&.]*$)"
+        r"^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$"
     )
     pattern = re.compile(password_regex)
     return bool(pattern.match(password))

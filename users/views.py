@@ -1,7 +1,8 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from core import db_helper
+from core.exceptions import UserNotFoundException
 from users import crud
 from users.crud import validate_user, get_current_token_payload, get_current_active_user
 from users.schemas import CreateUser, Token
@@ -30,7 +31,7 @@ async def get_user(
     if user := await crud.get_user_by_username(session=session, username=username):
         return user
     else:
-        raise HTTPException(status_code=404, detail="User not found")
+        raise UserNotFoundException
 
 
 @router.post("/login/")

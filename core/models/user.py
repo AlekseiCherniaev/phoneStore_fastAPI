@@ -11,5 +11,5 @@ class User(Base):
     username: Mapped[str] = mapped_column(unique=True)
     email: Mapped[str] = mapped_column(nullable=True)
     password: Mapped[bytes]
-    active: Mapped[bool] = mapped_column(default=True)
+    active: Mapped[bool] = mapped_column(default=True, server_default='True')
 

@@ -1,3 +1,4 @@
+import re
 from datetime import timedelta, datetime
 
 import jwt
@@ -53,3 +54,11 @@ def validate_password(
     hashed_password: bytes,
 ) -> bool:
     return bcrypt.checkpw(password.encode(), hashed_password=hashed_password)
+
+
+def password_check_complexity(password: str) -> bool:
+    password_regex = (
+        r"^([a-zA-Z0-9$@$!%*#?&.]*$)"
+    )
+    pattern = re.compile(password_regex)
+    return bool(pattern.match(password))

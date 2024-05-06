@@ -37,4 +37,3 @@ class DBHelper:
 
 
 db_helper = DBHelper(url=settings.get_db_url(), echo=settings.db_echo)
-

@@ -1,3 +1,4 @@
+from fastapi import HTTPException
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.engine import Result
@@ -5,7 +6,7 @@ from products.schemas import ProductCreate, ProductUpdate, ProductUpdatePartial
 from core.models import Product
 
 
-async def get_products(session: AsyncSession) -> list[Product]:
+async def get_products(session: AsyncSession) -> list:
     statement = select(Product).order_by(Product.id)
     result: Result = await session.execute(statement)
     products = result.scalars().all()
@@ -17,11 +18,17 @@ async def get_product_by_id(session: AsyncSession, product_id: int) -> Product |
 
 
 async def create_products(session: AsyncSession, product_in: ProductCreate) -> Product:
-    product = Product(**product_in.model_dump())
-    session.add(product)
-    await session.commit()
-    # await session.refresh(product)
-    return product
+    statement = select(Product).where(Product.name == product_in.name)
+    result: Result = await session.execute(statement)
+    product_ = result.scalar_one_or_none()
+    if not product_:
+        product = Product(**product_in.model_dump())
+        session.add(product)
+        await session.commit()
+        # await session.refresh(product)
+        return product
+    else:
+        raise HTTPException(status_code=404, detail="Product is already exists")
 
 
 async def update_product(
@@ -30,10 +37,16 @@ async def update_product(
     product_update: ProductUpdate | ProductUpdatePartial,
     partial: bool = False,
 ) -> Product:
-    for key, value in product_update.model_dump(exclude_unset=partial).items():
-        setattr(product, key, value)
-    await session.commit()
-    return product
+    statement = select(Product).where(Product.name == product_update.name)
+    result: Result = await session.execute(statement)
+    product_ = result.scalar_one_or_none()
+    if not product_ or product_.name == product_update.name:
+        for key, value in product_update.model_dump(exclude_unset=partial).items():
+            setattr(product, key, value)
+        await session.commit()
+        return product
+    else:
+        raise HTTPException(status_code=404, detail="Product with this name is already exists")
 
 
 async def delete_product(
@@ -42,4 +55,3 @@ async def delete_product(
 ) -> None:
     await session.delete(product)
     await session.commit()
-

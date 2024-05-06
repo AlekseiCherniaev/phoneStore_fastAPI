@@ -9,6 +9,7 @@ class Tag(Base):
     __tablename__ = "tags"
 
     tag_name: Mapped[str] = mapped_column(unique=True)
+
     phones: Mapped[list["Product"]] = relationship(
         back_populates="tags", secondary="phone_tag_association"
     )

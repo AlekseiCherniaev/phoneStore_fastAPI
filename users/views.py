@@ -1,32 +1,24 @@
-from typing import Annotated
-
 from fastapi import APIRouter, Depends, HTTPException
-from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.ext.asyncio import AsyncSession
-from passlib.context import CryptContext
 
-from core.models import db_helper, User
+from core import db_helper
 from users import crud
-from users.crud import validate_user
-from users.schemas import SCreateUser, SToken, SUserLogin
-from core.config import settings
-from auth.utils import validate_password, encode_jwt
+from users.crud import validate_user, get_current_token_payload, get_current_active_user
+from users.schemas import CreateUser, Token
+from auth.utils import encode_jwt
+from .schemas import User
 
 router = APIRouter(
     prefix="/users",
     tags=["Users"],
 )
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
-
-
-@router.post("/")
+@router.post("/add-user/")
 async def create_user(
-    user: SCreateUser,
+    user: CreateUser,
     session: AsyncSession = Depends(db_helper.scoped_session_dependency),
-):
+) -> User:
     return await crud.create_user(user_in=user, session=session)
 
 
@@ -34,8 +26,8 @@ async def create_user(
 async def get_user(
     username: str,
     session: AsyncSession = Depends(db_helper.scoped_session_dependency),
-):
-    if user := await crud.get_user(session=session, username=username):
+) -> User:
+    if user := await crud.get_user_by_username(session=session, username=username):
         return user
     else:
         raise HTTPException(status_code=404, detail="User not found")
@@ -44,27 +36,50 @@ async def get_user(
 @router.post("/login/")
 async def auth_user_issue_jwt(
     user: User = Depends(validate_user),
-) -> SToken:
+) -> Token:
     jwt_payload = {
         "sub": user.username,
         "username": user.username,
         "email": user.email,
     }
     token = encode_jwt(jwt_payload)
-    return SToken(
+    return Token(
         access_token=token,
         token_type="Bearer",
     )
 
 
-# @router.get("/users/me/")
-# def auth_user_check_self_info(
-#     payload: dict = Depends(get_current_token_payload),
-#     user: UserLogin = Depends(get_current_active_auth_user),
-# ) -> dict:
-#     iat = payload.get("iat")
-#     return {
-#         "username": user.username,
-#         "email": user.email,
-#         "logged_in_at": iat,
-#     }
+@router.get("/me/")
+async def auth_user_check_self_info(
+    payload: dict = Depends(get_current_token_payload),
+    user: User = Depends(get_current_active_user),
+) -> dict:
+    iat = payload.get("iat")
+    return {
+        "username": user.username,
+        "email": user.email,
+        "logged_in_at": iat,
+    }
+
+
+@router.post("/registration/")
+async def register_user(
+    user: User = Depends(create_user),
+) -> Token:
+    jwt_payload = {
+        "sub": user.username,
+        "username": user.username,
+        "email": user.email,
+    }
+    token = encode_jwt(jwt_payload)
+    return Token(
+        access_token=token,
+        token_type="Bearer",
+    )
+
+
+@router.delete("/delete-user/")
+async def delete_user(
+    username: str, session: AsyncSession = Depends(db_helper.scoped_session_dependency)
+) -> None:
+    return await crud.delete_user(username=username, session=session)

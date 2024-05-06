@@ -1,7 +1,8 @@
-from fastapi import HTTPException
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.engine import Result
+
+from core.exceptions import ProductAlreadyExistsException
 from products.schemas import ProductCreate, ProductUpdate, ProductUpdatePartial
 from core.models import Product
 
@@ -28,7 +29,7 @@ async def create_products(session: AsyncSession, product_in: ProductCreate) -> P
         # await session.refresh(product)
         return product
     else:
-        raise HTTPException(status_code=404, detail="Product is already exists")
+        raise ProductAlreadyExistsException
 
 
 async def update_product(
@@ -46,7 +47,7 @@ async def update_product(
         await session.commit()
         return product
     else:
-        raise HTTPException(status_code=404, detail="Product with this name is already exists")
+        raise ProductAlreadyExistsException
 
 
 async def delete_product(

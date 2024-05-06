@@ -38,3 +38,12 @@ class UserInactiveException(BException):
     status_code = status.HTTP_403_FORBIDDEN
     detail = "User inactive"
 
+
+class ProductAlreadyExistsException(BException):
+    status_code = status.HTTP_409_CONFLICT
+    detail = "Product is already exists"
+
+
+class ProductNotFoundException(BException):
+    status_code = status.HTTP_404_NOT_FOUND
+    detail = "Product not found"

@@ -1,9 +1,10 @@
 from typing import Annotated
 
-from fastapi import Path, Depends, HTTPException, status
+from fastapi import Path, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from core import db_helper
+from core.exceptions import ProductNotFoundException
 from core.models import Product
 from . import crud
 
@@ -16,7 +17,4 @@ async def product_by_id(
     if product is not None:
         return product
     else:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Product {product_id} not found!",
-        )
+        raise ProductNotFoundException

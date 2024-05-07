@@ -1,5 +1,15 @@
-__all__ = ("Base", "Phone", "db_helper", "DBHelper")
+__all__ = (
+    "Base",
+    "Product",
+    "User",
+    "Category",
+    "Tag",
+    "PhoneTagAssociation",
+)
 
 from .base import Base
-from .phone import Phone
-from .db_helper import db_helper, DBHelper
+from .phone import Product
+from .user import User
+from .category import Category
+from .tag import Tag
+from .phone_tag_association import PhoneTagAssociation

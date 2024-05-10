@@ -7,7 +7,7 @@ from products.schemas import ProductCreate, ProductUpdate, ProductUpdatePartial
 from core.models import Product
 
 
-async def get_products(session: AsyncSession) -> list:
+async def get_products(session: AsyncSession) -> list[Product]:
     statement = select(Product).order_by(Product.id)
     result: Result = await session.execute(statement)
     products = result.scalars().all()

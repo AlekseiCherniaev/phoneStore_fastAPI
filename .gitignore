@@ -1,4 +1,5 @@
 .idea
-certs/.env
+.env
 /test_main.http
 /certs/
+/.env

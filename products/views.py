@@ -14,7 +14,7 @@ router = APIRouter(
 @router.get("/all-products/")
 async def get_products(
     session: AsyncSession = Depends(db_helper.scoped_session_dependency),
-) -> list:
+) -> list[Product]:
     return await crud.get_products(session=session)
 
 
